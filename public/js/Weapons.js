@@ -20,6 +20,12 @@ Weapons = function(Player) {
 
 	var ezekiel = this.newWeapon('Ezekiel')
 	this.inventory[1] = ezekiel;
+	
+	var timmy = this.newWeapon('Timmy')
+	this.inventory[2] = timmy;
+	
+	var rmageddon = this.newWeapon('Armageddon')
+	this.inventory[3] = rmageddon;
 
 	// Notre arme actuelle est Ezekiel, qui se trouve en deuxième position
 	// dans le tableau des armes dans Armory
@@ -96,6 +102,21 @@ Weapons.prototype = {
 	},
 	stopFire : function(pickInfo) {
 	    this.launchBullets = false;
+	},
+	getDirection: function() {
+		// Détermine la taille de l'écran
+		var renderWidth = this.Player.game.engine.getRenderWidth(true);
+		var renderHeight = this.Player.game.engine.getRenderHeight(true);
+
+		// Cast un rayon au centre de l'écran
+		var direction = this.Player.game.scene.pick(renderWidth/2,renderHeight/2,function (item) {
+			if (item.name == "weapon" || item.id == "headMainPlayer" || item.id == "hitBoxPlayer")
+				return false;
+			else
+				return true;
+		});
+
+		return direction;
 	},
 	launchFire : function() {
 	    if (this.canFire) {
@@ -195,32 +216,34 @@ Weapons.prototype = {
 	    var setupLaser = this.Armory.weapons[idWeapon].setup.ammos;
 
 		var positionValue = this.inventory[this.actualWeapon].absolutePosition.clone();
-
+		//console.log(meshFound);
 		if(meshFound.hit){
-
 		    var laserPosition = positionValue;
 		    // On crée une ligne tracé entre le pickedPoint et le canon de l'arme
-		    let line = BABYLON.Mesh.CreateLines("lines", [
+		    /*let line = BABYLON.Mesh.CreateLines("lines", [
 		                laserPosition,
 		                meshFound.pickedPoint
-		    ], this.Player.game.scene);
+		    ], this.Player.game.scene);*/
 		    // On donne une couleur aléatoire
 		    var colorLine = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
-		    line.color = colorLine;
+		    /*line.color = colorLine;
 		    
 		    // On élargis le trait pour le rendre visible
 		    line.enableEdgesRendering();
 		    line.isPickable = false;
 		    line.edgesWidth = 40.0;
-		    line.edgesColor = new BABYLON.Color4(colorLine.r, colorLine.g, colorLine.b, 1);
+		    line.edgesColor = new BABYLON.Color4(colorLine.r, colorLine.g, colorLine.b, 1);*/
+			//console.log({...meshFound.pickedPoint});
+			this.Player.game.createGhostLaser([laserPosition, meshFound, colorLine, 1]);
+
 		    if(meshFound.pickedMesh.isPlayer){
 		        var damages = this.Armory.weapons[idWeapon].setup.damage;
     			sendDamages(damages,meshFound.pickedMesh.name)
 		    }
     		// On envoie le point de départ et le point d'arrivée
-			sendGhostLaser(laserPosition,meshFound.pickedPoint);
+			sendGhostLaser(laserPosition,meshFound, colorLine);
 
-			this.Player.game._lasers.push(line);
+			//this.Player.game._lasers.push(line);
 		}
 	},
 	hitHand : function(meshFound) {

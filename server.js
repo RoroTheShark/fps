@@ -125,7 +125,8 @@ io.on('connection', function(socket){
     };
     room.push(tempUser);
     //console.log(room);
-    console.log(`[connection] ${socket.client.id} - ${socket.name}`);
+    var date = new Date();
+    console.log(`[connection] ${socket.client.id} - ${socket.name} : ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`);
     io.emit('newPlayer',[room,getTopFive(room),props]); // all include sender
 
     // ================================================
@@ -141,6 +142,7 @@ io.on('connection', function(socket){
         }
     });
     socket.on('newRocket', function(data) {
+        //console.log(`[> newRocket] ${arrayData[3]}`);
         io.sockets.emit ('createGhostRocket', data);
     });
     socket.on('newLaser', function(data) {

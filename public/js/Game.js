@@ -181,6 +181,7 @@ Game.prototype = {
         }
     },
     createGhostRocket : function(dataRocket) {
+        //console.log(`[createGhostRocket]`);
         var positionRocket = dataRocket[0];
         var rotationRocket = dataRocket[1];
         var directionRocket = dataRocket[2];
@@ -190,13 +191,13 @@ Game.prototype = {
         
         newRocket.scaling = new BABYLON.Vector3(1,0.7,2);
 
-        newRocket.direction = new BABYLON.Vector3(directionRocket.x,directionRocket.y,directionRocket.z);
+        newRocket.direction = new BABYLON.Vector3(directionRocket._x,directionRocket._y,directionRocket._z);
 
         newRocket.position = new BABYLON.Vector3(
-            positionRocket.x + (newRocket.direction.x * 1) , 
-            positionRocket.y + (newRocket.direction.y * 1) ,
-            positionRocket.z + (newRocket.direction.z * 1));
-        newRocket.rotation = new BABYLON.Vector3(rotationRocket.x,rotationRocket.y,rotationRocket.z);
+            positionRocket._x + (newRocket.direction.x * 1) , 
+            positionRocket._y + (newRocket.direction.y * 1) ,
+            positionRocket._z + (newRocket.direction.z * 1));
+        newRocket.rotation = new BABYLON.Vector3(rotationRocket._x,rotationRocket._y,rotationRocket._z);
 
         newRocket.scaling = new BABYLON.Vector3(0.5,0.5,1);
         newRocket.isPickable = false;
@@ -209,22 +210,41 @@ Game.prototype = {
         game._rockets.push(newRocket);
     },
     createGhostLaser : function(dataRocket){
+        console.log("(createGhostLaser)");
         var position1 = dataRocket[0];
         var position2 = dataRocket[1];
-        var idPlayer = dataRocket[2];
+        var colorLine = dataRocket[2];
+        var idPlayer = dataRocket[3];
+
+        console.log(position2.pickedPoint);
+        //console.log(this._PlayerData.camera.weapons.getDirection().pickedPoint);
 
         let line = BABYLON.Mesh.CreateLines("lines", [
-                    position1,
-                    position2
+            this._PlayerData.camera.weapons.inventory[this._PlayerData.camera.weapons.actualWeapon].absolutePosition.clone(),
+            this._PlayerData.camera.weapons.getDirection().pickedPoint
                 ], this.scene);
-        var colorLine = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+                
         line.color = colorLine;
         line.enableEdgesRendering();
         line.isPickable = false;
         line.edgesWidth = 40.0;
         line.edgesColor = new BABYLON.Color4(colorLine.r, colorLine.g, colorLine.b, 1);
         this._lasers.push(line);
+        //console.log([...this._lasers]);
     },
+    displayScore(room){
+        if(room.length>=5){
+            var limitLoop = 4;
+        }else{
+            var limitLoop = room.length-1;
+        }
+        var indexName = 0;
+        for (var i = 0; i <= limitLoop ; i++) {
+            document.getElementById('player'+indexName).innerText = room[i].name;
+            document.getElementById('scorePlayer'+indexName).innerText = room[i].score;
+            indexName++;
+        }
+    }
 };
 
 // ------------------------- TRANSFO DE DEGRES/RADIANS 

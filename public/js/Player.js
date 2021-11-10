@@ -20,6 +20,9 @@ Player = function(game, canvas) {
     // Axe de mouvement X et Z
     this.axisMovement = [false,false,false,false];
 
+    this.textHealth = document.getElementById('textHealth');
+    this.textArmor = document.getElementById('textArmor');
+
     window.addEventListener("keyup", function(evt) {
         if(evt.keyCode == 90 || evt.keyCode == 83 || evt.keyCode == 81 || evt.keyCode == 68 ){
             switch(evt.keyCode){
@@ -110,7 +113,7 @@ Player = function(game, canvas) {
     // Changement des armes
     this.previousWheeling = 0;
 
-    canvas.addEventListener("mousewheel", function(evt) {
+    canvas.addEventListener("wheel", function(evt) {
         // Si la différence entre les deux tour de souris sont minime
         if(Math.round(evt.timeStamp - _this.previousWheeling)>10){
             if(evt.deltaY<0){
@@ -172,6 +175,11 @@ Player.prototype = {
         this.camera.isMain = true;
         // L'armure du joueur
         this.camera.armor = 0;
+
+        // Affichage de la vie et de l'armure
+        this.textHealth.innerText = this.camera.health;
+        this.textArmor.innerText = this.camera.armor;
+
 
         // On crée les armes !
         this.camera.weapons = new Weapons(this);
@@ -290,11 +298,19 @@ Player.prototype = {
             this.camera.armor = 0;
         }
         // Prise des dégats avec le tampon de l'armure
+        // Prise des dégâts avec le tampon de l'armure
         if(this.camera.health>damageTaken){
             this.camera.health-=damageTaken;
+            if(this.camera.isMain){
+                this.textHealth.innerText = this.camera.health;
+                this.textArmor.innerText = this.camera.armor;
+            }
         }else{
-            // Envoie de la mort par le joueur
-            this.playerDead(whoDamage)
+            if(this.camera.isMain){
+                this.textHealth.innerText = 0;
+                this.textArmor.innerText = 0;
+            }
+            this.playerDead(whoDamage);
         }
     },
     playerDead : function(whoKilled) {

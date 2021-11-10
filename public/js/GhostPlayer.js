@@ -70,8 +70,8 @@ GhostPlayer = function(game,ghostData,idRoom) {
 deleteGameGhost = function(game,deletedIndex){
     ghostPlayers = game._PlayerData.ghostPlayers;
     for (var i = 0; i < ghostPlayers.length; i++) {
-        console.log(ghostPlayers[i].idRoom);
-        console.log(deletedIndex)
+        //console.log(ghostPlayers[i].idRoom);
+        //console.log(deletedIndex)
         if(ghostPlayers[i].idRoom === deletedIndex){
             ghostPlayers[i].playerBox.dispose();
             ghostPlayers[i].head.dispose();

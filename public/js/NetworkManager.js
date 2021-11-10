@@ -28,7 +28,7 @@ socket.on('newPlayer',function(dataNewPlayer){
             }
         }
     }
-    // game.displayScore(score);
+    game.displayScore(score);
 
     // Vérifie les joueurs qui se connectent
     checkIfNewGhost(room);
@@ -77,8 +77,6 @@ var checkIfNewGhost = function(room){ // check if there is a new ghost in room
     }
 }
 var checkIfGhostDisconnect = function(room){ // check if it miss a ghost in room
-    console.log(room)
-    console.log(myRoom)
     for(var i=0;i<myRoom.length;i++){
         var ghostExist = false;
         for(var j=0;j<room.length;j++){
@@ -92,7 +90,7 @@ var checkIfGhostDisconnect = function(room){ // check if it miss a ghost in room
             deleteGhost(myRoom[i].id,i);
         }
     }
-    console.log([...myRoom]);
+    //console.log([...myRoom]);
 }
 var createGhost = function(ghost,id){ // create a new ghost
     myRoom.push(ghost);
@@ -110,8 +108,8 @@ var deleteGhost = function(index,position){ // delete the ghost by the index
 var sendGhostRocket = function(position, rotation, direction){
     socket.emit('newRocket',[position, rotation, direction, personalRoomId]);
 }
-var sendGhostLaser = function(position1, position2){
-    socket.emit('newLaser',[position1, position2, personalRoomId]);
+var sendGhostLaser = function(position1, position2, colorLine){
+    socket.emit('newLaser',[position1, position2, colorLine, personalRoomId]);
 }
 var sendDamages = function(damage,target){ // update all the ghosts with room data
     socket.emit('distributeDamage',[damage, target, personalRoomId]);
@@ -150,14 +148,16 @@ socket.on ('updatePlayer', function (arrayData) {
 });
 
 socket.on ('createGhostRocket', function (arrayData) {
+    //console.log(`[> createGhostRocket] ${arrayData[3]} != ${personalRoomId}`)
     if(arrayData[3] != personalRoomId){
         game.createGhostRocket(arrayData);
     }
 });
 
 socket.on ('createGhostLaser', function (arrayData) {
-    console.log(arrayData)
-    if(arrayData[2] != personalRoomId){
+    //console.log(arrayData)
+    if(arrayData[3] != personalRoomId){
+        console.log(`[> createGhostLaser]`);
         game.createGhostLaser(arrayData);
     }
 });
@@ -178,7 +178,7 @@ socket.on ('killGhostPlayer', function (arrayData) {
     if(idArray[1] == personalRoomId){
         // game._PlayerData.newDeadEnnemy(idArray[2]);
     }
-    // game.displayScore(roomScore);
+    game.displayScore(roomScore);
 });
 socket.on ('ressurectGhostPlayer', function (idPlayer) {
     if(idPlayer != personalRoomId){
